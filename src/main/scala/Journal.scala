@@ -5,7 +5,7 @@ import CONSTS._
 import better.files.File
 
 object Journal extends App {
-  lazy val todaysFile: File = GetFile(GetFilename(GetTodaysPrefix(stdPrefix)))
+  lazy val todaysFile: File = GetFile(GetTodaysPrefix(stdPrefix))
   lazy val dbFile: File = File("tmp.JDB")
 
   def GetAllJournFiles(directory:File): List[File] = {
@@ -22,12 +22,8 @@ object Journal extends App {
     format.format(Calendar.getInstance().getTime)
   }
 
-  def GetFilename(prefix:String): String = {
-    prefix + ".JOURN"
-  }
-
   def GetFile(filename:String): File = {
-    File(filename).createIfNotExists()
+    File(filename + ".JOURN").createIfNotExists()
   }
 
   def checkIfDateExists(filename:String): Boolean = {
@@ -35,6 +31,7 @@ object Journal extends App {
     f.exists
   }
 
+  // TODO : Add keyword detection in new file
   def openVim(file:File): Int = {
     val processBuilder = new ProcessBuilder("/usr/bin/vim",file.path.toString)
     processBuilder.redirectOutput(ProcessBuilder.Redirect.INHERIT)
@@ -53,8 +50,14 @@ object Journal extends App {
     }
 
     if (args.length == 0) { printUsage(); sys.exit(1) }
-    val arglist = args.toList
 
+    /**
+      * Iterates through a list of arguments assuming user is in the 'list' mode.
+      * Exits with code 1 if an unexpected argument is passed.
+      * @param map Current list of parsed parameters & their values
+      * @param list Remaining strings to iterate through
+      * @return Map[Symbol, Any] of parsed parameters & their values
+      */
     def nextListOption(map: OptionMap, list: List[String]) : OptionMap = {
       list match {
         case Nil => map
@@ -73,12 +76,16 @@ object Journal extends App {
       case "today" :: Nil => openVim(todaysFile)
       case "keywords" :: tail =>
         tail match {
-          case "search" :: word :: Nil => JDB.printKeywordFiles(word)
+          case "search" :: word :: Nil => JDB.searchKeyword(word)
           case "list" :: list_tail =>
             JDB.listKeywords(nextListOption(Map(),list_tail))
 
         }
 
+      // actually do we really need this? if we want to open a file we just go and open it.
+      // this might have been useful using a CURSES lib but not as a command line application.
+      // Will implement it for now; maybe we will put .JOURN files into subfolders, in which case this might be
+      //  marginally more useful.
       case "open" :: tail => // open stuff
       case _ =>
         println("Unsure what to do with the following arguments: " + _)
