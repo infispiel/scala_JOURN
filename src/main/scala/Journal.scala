@@ -19,7 +19,7 @@ object Journal extends App {
 
   // How would I extend this to get other dates?
   def GetTodaysPrefix(format: SimpleDateFormat): String = {
-    format.format(Calendar.getInstance().getTime())
+    format.format(Calendar.getInstance().getTime)
   }
 
   def GetFilename(prefix:String): String = {
@@ -46,6 +46,26 @@ object Journal extends App {
     p.waitFor()
   }
 
-    println(GetAllJournFiles(personalDirectory))
-//  openVim(todaysFile)
+  override
+  def main(args: Array[String]): Unit = {
+    def printUsage() {
+      println("Usage goes here")
+    }
+
+    if (args.length == 0) { printUsage(); sys.exit(1) }
+    val arglist = args.toList
+    type OptionMap = Map[Symbol, Any]
+
+    // Find the mode user wants us to go into
+    args.toList match {
+      case "today" :: Nil => openVim(todaysFile)
+      case "keywords" :: tail => // keywords stuff
+      case "open" :: tail => // open stuff
+      case _ =>
+        println("Unsure what to do with the following arguments: " + _)
+        printUsage()
+        sys.exit(1)
+    }
+
+  }
 }
