@@ -54,12 +54,31 @@ object Journal extends App {
 
     if (args.length == 0) { printUsage(); sys.exit(1) }
     val arglist = args.toList
-    type OptionMap = Map[Symbol, Any]
+
+    def nextListOption(map: OptionMap, list: List[String]) : OptionMap = {
+      list match {
+        case Nil => map
+        case "-s" :: value :: tail =>
+          nextListOption(map ++ Map('n_start -> value.toInt), tail)
+        case "-n" :: value :: tail =>
+          nextListOption(map ++ Map('n_view -> value.toInt), tail)
+        case option :: tail => println("Unknown keyword list option " + option)
+          printUsage()
+          sys.exit(1)
+      }
+    }
 
     // Find the mode user wants us to go into
     args.toList match {
       case "today" :: Nil => openVim(todaysFile)
-      case "keywords" :: tail => // keywords stuff
+      case "keywords" :: tail =>
+        tail match {
+          case "search" :: word :: Nil => JDB.printKeywordFiles(word)
+          case "list" :: list_tail =>
+            JDB.listKeywords(nextListOption(Map(),list_tail))
+
+        }
+
       case "open" :: tail => // open stuff
       case _ =>
         println("Unsure what to do with the following arguments: " + _)
