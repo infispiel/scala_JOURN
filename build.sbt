@@ -9,3 +9,5 @@ val betterFilesVersion = "3.6.0"
 libraryDependencies ++= Seq(
   "com.github.pathikrit" %% "better-files" % betterFilesVersion
 )
+
+mainClass in assembly :=Some("journalApp.Journal")

@@ -1,5 +1,7 @@
-import CONSTS._
+package journalApp
+
 import better.files.File
+import journalApp.CONSTS.OptionMap
 
 object JDB {
   val DBFile:File = CONSTS.personalDirectory / "tmp.JDB"

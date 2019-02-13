@@ -1,3 +1,5 @@
+package journalApp
+
 import java.text.SimpleDateFormat
 
 import better.files.File

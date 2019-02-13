@@ -1,8 +1,10 @@
+package journalApp
+
 import java.text.SimpleDateFormat
-import java.util.{Calendar, Dictionary}
-import CONSTS._
+import java.util.Calendar
 
 import better.files.File
+import journalApp.CONSTS.{OptionMap, personalDirectory, stdPrefix}
 
 object Journal extends App {
   lazy val todaysFile: File = GetFile(GetTodaysPrefix(stdPrefix))
@@ -86,6 +88,9 @@ object Journal extends App {
       // this might have been useful using a CURSES lib but not as a command line application.
       // Will implement it for now; maybe we will put .JOURN files into subfolders, in which case this might be
       //  marginally more useful.
+      // wait yes of course we do; if we want JOURN to automagically detect changes in keywords within files
+      //  they have to be opened through JOURN itself so it knows when the file is closed. Otherwise JOURN
+      //  will have to creepily run in the background and watch for file changes which is pretty weird.
       case "open" :: tail => // open stuff
       case _ =>
         println("Unsure what to do with the following arguments: " + _)
