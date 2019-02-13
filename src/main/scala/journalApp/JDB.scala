@@ -10,6 +10,9 @@ object JDB {
   var DBFile:File = CONSTS.personalDirectory / "tmp.JDB"
   val keywordReg:Regex = """^([0-9]+)#K ([\s]+)$""".r // expected format of a keyword
 
+  lazy val jdb:mutable.Map[String, Array[String]] = LoadDB(DBFile)
+  lazy val dbIsEmpty:Boolean = jdb.keys.isEmpty
+
   def LoadDB(DBFile:File): mutable.Map[String,Array[String]] = {
     DBFile.lines
       .filter(line => line.startsWith("#"))
@@ -22,8 +25,15 @@ object JDB {
       .fold(mutable.Map.empty)(_ ++ _)
   }
 
-  lazy val jdb:mutable.Map[String, Array[String]] = LoadDB(DBFile)
-  lazy val dbIsEmpty:Boolean = jdb.keys.isEmpty
+  def WriteDB(): Unit = {
+    DBFile.overwrite(
+      jdb.map({
+        case (keyword, files) =>
+          s"#$keyword$WtFS" + files.mkString(FtFS)
+      })
+      .mkString("\n")
+    )
+  }
 
   // Made it slightly more functional programtic-ish, I think?
   def searchKeyword(word:String):Array[String] = {
