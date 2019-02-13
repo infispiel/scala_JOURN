@@ -1,44 +1,35 @@
 package journalApp
 
 import better.files.File
-import journalApp.CONSTS.OptionMap
+import journalApp.CONSTS._
+
+import scala.collection.mutable
+import scala.util.matching.Regex
 
 object JDB {
-  val DBFile:File = CONSTS.personalDirectory / "tmp.JDB"
+  var DBFile:File = CONSTS.personalDirectory / "tmp.JDB"
+  val keywordReg:Regex = """^([0-9]+)#K ([\s]+)$""".r // expected format of a keyword
 
-  def LoadDB(DBFile:File): Map[String,Array[String]] = {
+  def LoadDB(DBFile:File): mutable.Map[String,Array[String]] = {
     DBFile.lines
       .filter(line => line.startsWith("#"))
       .map(_.substring(1))
       .map((line:String)=>{
-        val a = line.split(':')(0)
-        val b = line.split(':')(1).split(',')
-        Map(a->b)
-      }:Map[String,Array[String]])
-      .fold(Map.empty)(_ ++ _)
+        val a = line.split(WtFS)(0)
+        val b = line.split(WtFS)(1).split(FtFS)
+        mutable.Map(a->b)
+      }:mutable.Map[String,Array[String]])
+      .fold(mutable.Map.empty)(_ ++ _)
   }
 
-  lazy val jdb:Map[String, Array[String]] = LoadDB(DBFile)
+  lazy val jdb:mutable.Map[String, Array[String]] = LoadDB(DBFile)
   lazy val dbIsEmpty:Boolean = jdb.keys.isEmpty
 
-  /**
-    * Internal function to search the DB for what files contain a given keyword.
-    * @param word The keyword to search for.
-    * @return An Array[String] of all files that contain a given keyword.
-    */
-  private def _searchKeyword(word:String):Array[String] = {
-    jdb(word)
-  }
-
-  /**
-    * Returns the names of all files that contain a given keyword.
-    * @param word the keyword to search for in the db
-    */
-  def searchKeyword(word:String):Unit = {
-    if(dbIsEmpty) println("No keys to search."); sys.exit(0)
-    // TODO: Add behavior if no files are found.
-    println("Files containing the word " + word + ":")
-    println(_searchKeyword(word).fold("")(_ + ", " + _).substring(2))
+  // Made it slightly more functional programtic-ish, I think?
+  def searchKeyword(word:String):Array[String] = {
+    jdb.getOrElse(word, Array.empty[String])
+    //println("Files containing the word " + word + ";")
+    //println(_searchKeyword(word).fold("")(_ + ", " + _).substring(2))
   }
 
   // TODO : Properly deconvolute the two functions below.
@@ -79,4 +70,24 @@ object JDB {
 
   }
 
+  // TODO: How do I make this Null-Safe?
+  def findNewKeywords(file:File): (String, List[(String,Int)]) = {
+    val found = file.lines
+    .toIterable.zipWithIndex.filter({
+      case (line, _) => keywordReg.findFirstIn(line).isDefined
+    }).toList
+
+    (getNameFromPath(file), found)
+  }
+
+  def addNewKeywords(filePrefix:String, keywords:List[(String, Int)]): Unit = {
+    keywords
+      .map({case (keyword:String, line:Int) =>
+        (keyword, s"$filePrefix:$line")
+      })
+      .foreach({
+        case (keyword:String, fileInfo:String) =>
+          jdb(keyword) = jdb.getOrElse(keyword, Array.empty) ++ Array(fileInfo)
+      })
+  }
 }

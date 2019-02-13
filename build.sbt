@@ -11,3 +11,4 @@ libraryDependencies ++= Seq(
 )
 
 mainClass in assembly :=Some("journalApp.Journal")
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5" % "test"
