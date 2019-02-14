@@ -60,13 +60,13 @@ object Journal extends App {
       * @param list Remaining strings to iterate through
       * @return Map[Symbol, Any] of parsed parameters & their values
       */
-    def nextListOption(map: OptionMap, list: List[String]) : OptionMap = {
+    def nextListOption(map: Map[String, Int], list: List[String]) : Map[String, Int] = {
       list match {
         case Nil => map
         case "-s" :: value :: tail =>
-          nextListOption(map ++ Map('n_start -> value.toInt), tail)
+          nextListOption(map ++ Map("n_start" -> value.toInt), tail)
         case "-n" :: value :: tail =>
-          nextListOption(map ++ Map('n_view -> value.toInt), tail)
+          nextListOption(map ++ Map("n_view" -> value.toInt), tail)
         case option :: tail => println("Unknown keyword list option " + option)
           printUsage()
           sys.exit(1)
@@ -80,7 +80,7 @@ object Journal extends App {
         tail match {
           case "search" :: word :: Nil => JDB.searchKeyword(word)
           case "list" :: list_tail =>
-            JDB.listKeywords(nextListOption(Map(),list_tail))
+            JDB.listKeywords(nextListOption(Map.empty,list_tail))
 
         }
 

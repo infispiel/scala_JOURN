@@ -16,6 +16,7 @@ class JDBTest extends FunSuite{
   {
     db_file_temp.write("#KEYWORD;FILE:10,FILE2:3")
     assert(JDB.LoadDB(db_file_temp).getOrElse("KEYWORD", Array.empty).deep == Array("FILE:10","FILE2:3").deep)
+    Array("a", "b").sameElements(Array("b", "a"))
   }
 
   test("searchForKeyword_DB_Test")
