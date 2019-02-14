@@ -47,6 +47,8 @@ object Journal extends App {
 
   override
   def main(args: Array[String]): Unit = {
+
+    val jdb = Jdb()
     def printUsage() {
       println("Usage goes here")
     }

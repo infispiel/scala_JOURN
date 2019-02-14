@@ -4,7 +4,7 @@ import journalApp._
 
 import scala.collection.mutable
 
-class JDBTest extends FunSuite{
+class JdbTest extends FunSuite{
   val db_file_temp:File = File.newTemporaryFile("tmp","db")
 
   test("LoadDB_Empty_Test")

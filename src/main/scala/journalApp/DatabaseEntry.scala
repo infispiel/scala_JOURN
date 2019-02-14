@@ -20,9 +20,9 @@ object DatabaseEntry {
     DatabaseEntry(word, entries)
   }
 }
-case class DatabaseEntry(word: String, appearences: Map[String, Int]) {
+case class DatabaseEntry(word: String, appearances: Map[String, Int]) {
 
-  def addEntry(appearence: (String, Int)): DatabaseEntry = {
-    DatabaseEntry(word, appearences + appearence)
+  def addAppearance(appearance: (String, Int)): DatabaseEntry = {
+    DatabaseEntry(word, appearances + appearance)
   }
 }

@@ -6,7 +6,7 @@ import journalApp.CONSTS._
 import scala.collection.mutable
 import scala.util.matching.Regex
 
-object JDB {
+class Jdb {
   var DBFile: File = CONSTS.personalDirectory / "tmp.JDB"
   val keywordReg: Regex = """^([0-9]+)#K ([\s]+)$""".r // expected format of a keyword
 
@@ -31,11 +31,8 @@ object JDB {
     )
   }
 
-  // Made it slightly more functional programtic-ish, I think?
   def searchKeyword(word: String): Option[Map[String, Int]] = {
-    jdb.get(word).map(entry => entry.appearences)
-    //println("Files containing the word " + word + ";")
-    //println(_searchKeyword(word).fold("")(_ + ", " + _).substring(2))
+    jdb.get(word).map(entry => entry.appearances)
   }
 
   // TODO : Properly deconvolute the two functions below.
