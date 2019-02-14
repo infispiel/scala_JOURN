@@ -6,8 +6,7 @@ import journalApp.CONSTS._
 import scala.collection.mutable
 import scala.util.matching.Regex
 
-class Jdb {
-  var DBFile: File = CONSTS.personalDirectory / "tmp.JDB"
+class Jdb(DBFile:File) {
   val keywordReg: Regex = """^([0-9]+)#K ([\s]+)$""".r // expected format of a keyword
 
   lazy val jdb: Map[String, DatabaseEntry] = LoadDB(DBFile)
