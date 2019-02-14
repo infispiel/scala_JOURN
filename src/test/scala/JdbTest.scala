@@ -6,7 +6,12 @@ import scala.collection.mutable
 
 class JdbTest extends FunSuite{
   val db_file_temp:File = File.newTemporaryFile("tmp","db")
-
+  test("Create DB")
+  {
+    val jdb:Jdb = new Jdb(db_file_temp)
+    jdb.addNewKeywords("asdf",List(("Hello",5)))
+  }
+/*
   test("LoadDB_Empty_Test")
   {
     assert(JDB.LoadDB(db_file_temp).isEmpty)
@@ -37,4 +42,5 @@ class JdbTest extends FunSuite{
     JDB.WriteDB()
     assert(db_file_temp.contentAsString == "#KEYWORD;FILE:10,FILE2:3\n#KEYWORD2;FILE3:10")
   }
+  */
 }

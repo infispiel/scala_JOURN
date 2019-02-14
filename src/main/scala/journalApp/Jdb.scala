@@ -3,16 +3,16 @@ package journalApp
 import better.files.File
 import journalApp.CONSTS._
 
-import scala.collection.mutable
 import scala.util.matching.Regex
+import io.circe._, io.circe.generic.auto._, io.circe.parser._, io.circe.syntax._
 
 class Jdb(DBFile:File) {
   val keywordReg: Regex = """^([0-9]+)#K ([\s]+)$""".r // expected format of a keyword
 
-  lazy val jdb: Map[String, DatabaseEntry] = LoadDB(DBFile)
-  lazy val dbIsEmpty: Boolean = jdb.isEmpty
+  lazy val jdb: Database= LoadDB(DBFile)
 
-  def LoadDB(DBFile: File): Map[String, DatabaseEntry] = {
+  def LoadDB(DBFile: File): Database = {
+    //decode[Database](DBFile.contentAsString)
     DBFile.lines
       .filter(line => line.startsWith("#"))
       .map(DatabaseEntry.apply)
@@ -20,19 +20,14 @@ class Jdb(DBFile:File) {
       .toMap
   }
 
-  def WriteDB(jdb: Map[String, DatabaseEntry]): Unit = {
-    DBFile.overwrite(
-      jdb.map({
-        case (keyword, files) =>
-          s"#$keyword$WtFS" + files.mkString(FtFS)
-      })
-        .mkString("\n")
-    )
+  def WriteDB(jdb: Database): Unit = {
+    //DBFile.overwrite(jdb.asJson.noSpaces)
   }
 
   def searchKeyword(word: String): Option[Map[String, Int]] = {
     jdb.get(word).map(entry => entry.appearances)
   }
+
 
   // TODO : Properly deconvolute the two functions below.
   /**

@@ -12,5 +12,9 @@ case class Database(entries: Map[String, DatabaseEntry]) {
     addEntry(newDatabaseEntry)
   }
 
+  def get(word:String): Option[DatabaseEntry] = {
+    entries.get(word)
+  }
+
 }
 
