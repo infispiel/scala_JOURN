@@ -4,9 +4,11 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 
 import better.files.File
-import journalApp.CONSTS.{OptionMap, personalDirectory, stdPrefix}
+import journalApp.Jdb
 
 object Journal extends App {
+  val personalDirectory: File = File.currentWorkingDirectory
+  val stdPrefix: SimpleDateFormat = new SimpleDateFormat("MM_dd_yy")
   lazy val todaysFile: File = GetFile(GetTodaysPrefix(stdPrefix))
   lazy val dbFile: File = File("tmp.JDB")
 
@@ -48,7 +50,8 @@ object Journal extends App {
   override
   def main(args: Array[String]): Unit = {
 
-    val jdb = Jdb()
+    val jdb = new Jdb(dbFile)
+    val db = jdb.LoadDB()
     def printUsage() {
       println("Usage goes here")
     }
@@ -80,9 +83,9 @@ object Journal extends App {
       case "today" :: Nil => openVim(todaysFile)
       case "keywords" :: tail =>
         tail match {
-          case "search" :: word :: Nil => JDB.searchKeyword(word)
+          case "search" :: word :: Nil => jdb.searchKeyword(db,word)
           case "list" :: list_tail =>
-            JDB.listKeywords(nextListOption(Map.empty,list_tail))
+            jdb.listKeywords(db,nextListOption(Map.empty,list_tail))
 
         }
 

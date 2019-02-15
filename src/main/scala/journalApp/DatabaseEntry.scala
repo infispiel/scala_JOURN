@@ -22,7 +22,28 @@ object DatabaseEntry {
 }
 case class DatabaseEntry(word: String, appearances: Map[String, Int]) {
 
+  def this(word:String, file:String, line:Int) = {
+    this(word, Map(file -> line))
+  }
+
   def addAppearance(appearance: (String, Int)): DatabaseEntry = {
     DatabaseEntry(word, appearances + appearance)
   }
+
+  def addAppearances(otherEntry: DatabaseEntry): DatabaseEntry = {
+    if (!word.equals(otherEntry.word)) { throw new IllegalArgumentException("Two entries of different words were attempted to be merged.") }
+    // TODO: What if a keyword appears multiple times in a file?
+    DatabaseEntry(word, appearances ++ otherEntry.appearances)
+  }
+
+  override def toString():String = {
+    appearances.map(
+        (entry:(String,Int)) => {
+          entry._1 + ":" + entry._2.toString
+        }:String
+      )
+      .fold("")(_ + "," + _)
+      .substring(1)
+  }
+
 }
