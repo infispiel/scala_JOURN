@@ -29,5 +29,12 @@ case class Database(entries: Map[String, DatabaseEntry]) {
       .fold("")(_ + "\n" + _).trim
   }
 
+  def saveString():String = {
+    entries.map(
+      (entry:(String, DatabaseEntry)) => { entry._2.saveString() }
+    )
+    .fold("")(_ + "\n" + _).trim
+  }
+
 }
 

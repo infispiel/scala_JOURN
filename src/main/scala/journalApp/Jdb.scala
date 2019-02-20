@@ -6,19 +6,17 @@ import scala.util.matching.Regex
 import io.circe._, io.circe.generic.auto._, io.circe.parser._, io.circe.syntax._
 
 class Jdb(DBFile:File) {
-  val keywordReg: Regex = """^([0-9]+)#K ([\s]+)$""".r // expected format of a keyword
-
   def LoadDB(): Database = {
     DBFile.createIfNotExists()
     //decode[Database](DBFile.contentAsString)
     Database(DBFile.lines
-      .filter(line => line.startsWith("#"))
       .map(DatabaseEntry.apply)
       .map(dbEntry => (dbEntry.word, dbEntry))
       .toMap)
   }
 
   def WriteDB(jdb: Database): Unit = {
+    DBFile.overwrite(jdb.saveString())
     //DBFile.overwrite(jdb.asJson.noSpaces)
   }
 

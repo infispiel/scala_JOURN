@@ -46,4 +46,8 @@ case class DatabaseEntry(word: String, appearances: Map[String, Int]) {
       .substring(1)
   }
 
+  def saveString():String = {
+    word + ";" + toString()
+  }
+
 }
