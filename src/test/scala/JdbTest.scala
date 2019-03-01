@@ -79,4 +79,16 @@ class JdbTest extends FunSuite{
     val db = jdb.LoadDB()
     assert(db.toString().equals("(Hello,asdf:6,asdf2:6)"))
   }
+
+  test("Test Finding 1 new word in a file")
+  {
+    db_file_temp.write("")
+    val file_text = "# K: word"
+    val temporary_file = File.newTemporaryFile()
+    temporary_file.write(file_text)
+    val jdb:Jdb = new Jdb(db_file_temp)
+    val db = jdb.LoadDB()
+    val db2 = jdb.findNewKeywords(db, temporary_file)
+    assert(db2.toString().equals("(word," + temporary_file.nameWithoutExtension + ":1)"))
+  }
 }

@@ -1,5 +1,7 @@
 package journalApp
 
+import better.files.File
+
 object DatabaseEntry {
 
   def apply(line: String): DatabaseEntry = {
@@ -24,6 +26,10 @@ case class DatabaseEntry(word: String, appearances: Map[String, Int]) {
 
   def this(word:String, file:String, line:Int) = {
     this(word, Map(file -> line))
+  }
+
+  def this(word:String, file:File, line:Int) = {
+    this(word, Map(file.nameWithoutExtension -> line))
   }
 
   def addAppearance(appearance: (String, Int)): DatabaseEntry = {

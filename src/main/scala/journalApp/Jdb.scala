@@ -52,14 +52,25 @@ class Jdb(DBFile:File) {
   }
 
   // TODO: How do I make this Null-Safe?
-  /*def findNewKeywords(jdb:Database, file: File): (String, List[(String, Int)]) = {
-    val found = file.lines
-      .toIterable.zipWithIndex.filter({
-      case (line, _) => keywordReg.findFirstIn(line).isDefined
-    }).toList
-
-    (getNameFromPath(file), found)
-  }*/
+  def findNewKeywords(jdb:Database, file: File): Database = {
+    file.lines
+      .toIterable.zipWithIndex
+      .filter({
+        case (line: String, _) => {
+          line.startsWith("# K:")
+        }
+      })
+      .map(
+        ( lineInfo:(String, Int)) => {
+          new DatabaseEntry(lineInfo._1.substring(5), file, lineInfo._2 + 1)
+        }:DatabaseEntry
+      )
+      .foldLeft(jdb)(
+      (prevDB:Database, entry:DatabaseEntry) => {
+        prevDB.addEntry(entry)
+      }
+    )
+  }
 
   def addNewKeywords(jdb:Database, filePrefix: String, keywords: List[(String, Int)]): Database = {
     keywords.map(
